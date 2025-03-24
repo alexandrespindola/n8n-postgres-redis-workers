@@ -25,11 +25,12 @@ x-shared: &shared
     - QUEUE_BULL_REDIS_HOST=redis
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - NODE_FUNCTION_ALLOW_BUILTIN=*
+    - NODE_FUNCTION_ALLOW_EXTERNAL=axios
   links:
     - postgres
     - redis
   volumes:
-      - n8n_storage:/home/node/.n8n
+    - n8n_storage:/home/node/.n8n
   depends_on:
     redis:
       condition: service_healthy
@@ -70,42 +71,42 @@ services:
 
   n8n:
     <<: *shared
-    image: docker.n8n.io/n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: start
     ports:
       - "127.0.0.1:5678:5678"
 
   n8n-worker-1:
     <<: *shared
-    image: n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-2:
     <<: *shared
-    image: n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-3:
     <<: *shared
-    image: n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-4:
     <<: *shared
-    image: n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-5:
     <<: *shared
-    image: n8nio/n8n
+    build: .  # Usando o Dockerfile local em vez da imagem direta
     command: worker
     depends_on:
       - n8n
