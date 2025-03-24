@@ -25,7 +25,7 @@ x-shared: &shared
     - QUEUE_BULL_REDIS_HOST=redis
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - NODE_FUNCTION_ALLOW_BUILTIN=*
-    - NODE_FUNCTION_ALLOW_EXTERNAL=axios
+    - NODE_FUNCTION_ALLOW_EXTERNAL=node-fetch
   links:
     - postgres
     - redis
