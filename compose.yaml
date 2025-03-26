@@ -36,6 +36,8 @@ x-shared: &shared
       condition: service_healthy
     postgres:
       condition: service_healthy
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
 
 services:
   postgres:
@@ -71,42 +73,42 @@ services:
 
   n8n:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: start
     ports:
       - "127.0.0.1:5678:5678"
 
   n8n-worker-1:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-2:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-3:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-4:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: worker
     depends_on:
       - n8n
 
   n8n-worker-5:
     <<: *shared
-    build: .  # Usando o Dockerfile local em vez da imagem direta
+    build: .
     command: worker
     depends_on:
       - n8n
