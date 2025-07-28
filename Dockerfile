@@ -2,6 +2,6 @@ FROM n8nio/n8n:next
 
 USER root
 
-RUN npm install node-fetch@2 moment moment-timezone lodash uuid validator date-fns jsonpath joi form-data
+RUN npm install -g n8n node-fetch@2 moment moment-timezone lodash uuid validator date-fns jsonpath joi form-data
 
 USER node
