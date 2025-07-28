@@ -76,39 +76,39 @@ services:
   n8n:
     <<: *shared
     build: .
-    command: start
+    command: n8n
 
   n8n-worker-1:
     <<: *shared
     build: .
-    command: worker --concurrency=20
+    command: n8n worker --concurrency=20
     depends_on:
       - n8n
 
   n8n-worker-2:
     <<: *shared
     build: .
-    command: worker --concurrency=20
+    command: n8n worker --concurrency=20
     depends_on:
       - n8n
 
   n8n-worker-3:
     <<: *shared
     build: .
-    command: worker --concurrency=20
+    command: n8n worker --concurrency=20
     depends_on:
       - n8n
 
   n8n-worker-4:
     <<: *shared
     build: .
-    command: worker --concurrency=20
+    command: n8n worker --concurrency=20
     depends_on:
       - n8n
 
   n8n-worker-5:
     <<: *shared
     build: .
-    command: worker --concurrency=20
+    command: n8n worker --concurrency=20
     depends_on:
       - n8n
