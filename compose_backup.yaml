@@ -52,6 +52,8 @@ services:
       - POSTGRES_DB
       - POSTGRES_NON_ROOT_USER
       - POSTGRES_NON_ROOT_PASSWORD
+    ports:
+      - "127.0.0.1:54322:5432"
     volumes:
       - db_storage:/var/lib/postgresql/data
       - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
@@ -76,6 +78,8 @@ services:
     <<: *shared
     build: .
     command: start
+    ports:
+      - "127.0.0.1:5678:5678"
 
   n8n-worker-1:
     <<: *shared
