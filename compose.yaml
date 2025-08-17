@@ -27,7 +27,7 @@ x-shared: &shared
     - QUEUE_BULL_REDIS_HOST=redis
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - NODE_FUNCTION_ALLOW_BUILTIN=*
-    - NODE_FUNCTION_ALLOW_EXTERNAL=node-fetch,moment,moment-timezone,lodash,uuid,validator,date-fns,jsonpath,joi,form-data
+    - NODE_FUNCTION_ALLOW_EXTERNAL=node-fetch,moment,moment-timezone,lodash,uuid,validator,date-fns,jsonpath,joi,form-data,@faker-js/faker,ms
     - VUE_APP_URL_BASE_API=${N8N_PROTOCOL}://${N8N_HOST}
   links:
     - postgres
