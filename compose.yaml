@@ -126,6 +126,7 @@ services:
       - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
       - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=30
       - N8N_RUNNERS_TASK_BROKER_URI=http://n8n:5679
+      - N8N_RUNNERS_MAX_OLD_SPACE_SIZE=2048
     depends_on:
       n8n:
         condition: service_healthy
@@ -136,6 +137,17 @@ services:
       - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
       - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=30
       - N8N_RUNNERS_TASK_BROKER_URI=http://n8n-worker:5679
+      - N8N_RUNNERS_MAX_OLD_SPACE_SIZE=2048
     depends_on:
       n8n-worker:
         condition: service_healthy
+
+  puppeteer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.puppeteer
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production

@@ -1,38 +1,9 @@
-# n8nio/runners é Alpine 3.23 mas o binário apk foi removido da imagem final.
-# Copiamos apenas o binário e a lib que faltam; as outras dependências
-# (libssl, libcrypto, libz, ld-musl) já existem na imagem.
-FROM alpine:3.23 AS apk-source
-
 FROM n8nio/runners:latest
-
-COPY --from=apk-source /sbin/apk /sbin/apk
-COPY --from=apk-source /usr/lib/libapk.so.3.0.0 /usr/lib/libapk.so.3.0.0
 
 USER root
 
-# Chromium + dependências para Puppeteer/Playwright
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    font-noto \
-    pango \
-    libxkbcommon \
-    udev \
-    dbus
-
-# Puppeteer encontra o Chromium via estas variáveis
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    CHROME_BIN=/usr/bin/chromium-browser
-
-# Bibliotecas JS para o Code Node
+# Bibliotecas JS essenciais para o Code Node (sem Puppeteer/Playwright)
 RUN cd /opt/runners/task-runner-javascript && pnpm add \
-    puppeteer-core \
-    playwright-core \
     node-fetch \
     axios \
     cheerio \
@@ -55,8 +26,7 @@ RUN cd /opt/runners/task-runner-javascript && pnpm add \
     pdf-parse \
     sharp \
     openai \
-    @anthropic-ai/sdk \
-    tesseract.js
+    @anthropic-ai/sdk
 
 # Configuração do launcher (allowlist de módulos)
 COPY --chown=runner:runner n8n-task-runners.json /etc/n8n-task-runners.json

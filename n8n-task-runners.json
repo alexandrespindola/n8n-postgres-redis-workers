@@ -5,7 +5,6 @@
       "workdir": "/home/runner",
       "command": "/usr/local/bin/node",
       "args": [
-        "--disallow-code-generation-from-strings",
         "--disable-proto=delete",
         "/opt/runners/task-runner-javascript/dist/start.js"
       ],
@@ -22,18 +21,12 @@
         "ENVIRONMENT",
         "DEPLOYMENT_NAME",
         "HOME",
-        "PUPPETEER_EXECUTABLE_PATH",
-        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD",
-        "CHROME_BIN",
-        "CHROMIUM_FLAGS",
         "NODE_FUNCTION_ALLOW_BUILTIN",
         "NODE_FUNCTION_ALLOW_EXTERNAL"
       ],
       "env-overrides": {
         "NODE_FUNCTION_ALLOW_BUILTIN": "*",
-        "NODE_FUNCTION_ALLOW_EXTERNAL": "puppeteer-core,playwright-core,node-fetch,axios,cheerio,jsdom,xpath,tough-cookie,moment,moment-timezone,lodash,uuid,validator,date-fns,jsonpath,joi,form-data,@faker-js/faker,ms,xml2js,csv-parse,pdf-parse,sharp,openai,@anthropic-ai/sdk,tesseract.js",
-        "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/chromium-browser",
-        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true",
+        "NODE_FUNCTION_ALLOW_EXTERNAL": "node-fetch,axios,cheerio,jsdom,xpath,tough-cookie,moment,moment-timezone,lodash,uuid,validator,date-fns,jsonpath,joi,form-data,@faker-js/faker,ms,xml2js,csv-parse,pdf-parse,sharp,openai,@anthropic-ai/sdk",
         "N8N_RUNNERS_HEALTH_CHECK_SERVER_HOST": "0.0.0.0"
       }
     },
