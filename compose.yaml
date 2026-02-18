@@ -31,6 +31,7 @@ x-n8n-shared: &n8n-shared
     - QUEUE_BULL_REDIS_HOST=redis
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - QUEUE_HEALTH_CHECK_PORT=${QUEUE_HEALTH_CHECK_PORT:-5680}
+    - N8N_NATIVE_PYTHON_RUNNER=true
     - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=${OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS:-true}
     - GENERIC_TIMEZONE=${GENERIC_TIMEZONE:-Europe/Berlin}
     - GEMINI_API_KEY=${GEMINI_API_KEY}
@@ -41,10 +42,11 @@ x-runners-shared: &runners-shared
     context: .
     dockerfile: Dockerfile.runners
   restart: always
-  environment:
-    - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
-    - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=0
-  # Healthcheck removido pois 'wget' não existe na imagem distroless
+  shm_size: "2gb"
+  read_only: true
+  tmpfs:
+    - /tmp:size=512m
+    - /home/runner:size=256m
 
 services:
   postgres:
@@ -62,7 +64,11 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h localhost -U $${POSTGRES_USER} -d $${POSTGRES_DB}",
+        ]
       interval: 5s
       timeout: 20s
       retries: 10
@@ -73,7 +79,7 @@ services:
     volumes:
       - redis_storage:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -91,7 +97,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:5678/healthz || exit 1']
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5678/healthz || exit 1"]
       interval: 5s
       timeout: 20s
       retries: 10
@@ -109,15 +115,17 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:5680/healthz || exit 0']
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5680/healthz || exit 1"]
       interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   runners-main:
     <<: *runners-shared
     environment:
       - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=0
       - N8N_RUNNERS_TASK_BROKER_URI=http://n8n:5679
     depends_on:
       n8n:
@@ -127,6 +135,7 @@ services:
     <<: *runners-shared
     environment:
       - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=0
       - N8N_RUNNERS_TASK_BROKER_URI=http://n8n-worker:5679
     depends_on:
       n8n-worker:

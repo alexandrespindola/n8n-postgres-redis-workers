@@ -1,16 +1,16 @@
-# Stage 1: Alpine limpo para copiar o apk
-FROM alpine:3.22 AS alpine-base
+# n8nio/runners é Alpine 3.23 mas o binário apk foi removido da imagem final.
+# Copiamos apenas o binário e a lib que faltam; as outras dependências
+# (libssl, libcrypto, libz, ld-musl) já existem na imagem.
+FROM alpine:3.23 AS apk-source
 
-# Stage 2: imagem dos runners (distroless)
 FROM n8nio/runners:latest
 
-# Restaura o apk da imagem Alpine (workaround para instalar Chromium)
-COPY --from=alpine-base /sbin/apk /sbin/apk
-COPY --from=alpine-base /usr/lib/libapk.so* /usr/lib/
+COPY --from=apk-source /sbin/apk /sbin/apk
+COPY --from=apk-source /usr/lib/libapk.so.3.0.0 /usr/lib/libapk.so.3.0.0
 
 USER root
 
-# Instalação do Chromium e dependências para Puppeteer
+# Chromium + dependências para Puppeteer/Playwright
 RUN apk add --no-cache \
     chromium \
     nss \
@@ -24,13 +24,12 @@ RUN apk add --no-cache \
     udev \
     dbus
 
-# Variáveis de ambiente para o Puppeteer encontrar o Chromium
+# Puppeteer encontra o Chromium via estas variáveis
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    CHROME_BIN=/usr/bin/chromium-browser \
-    CHROMIUM_FLAGS="--no-sandbox --disable-gpu --disable-dev-shm-usage"
+    CHROME_BIN=/usr/bin/chromium-browser
 
-# Instalação das bibliotecas JS
+# Bibliotecas JS para o Code Node
 RUN cd /opt/runners/task-runner-javascript && pnpm add \
     puppeteer-core \
     playwright-core \
@@ -59,7 +58,7 @@ RUN cd /opt/runners/task-runner-javascript && pnpm add \
     @anthropic-ai/sdk \
     tesseract.js
 
-# AJUSTE CRÍTICO: Copiar com permissão para o usuário runner
+# Configuração do launcher (allowlist de módulos)
 COPY --chown=runner:runner n8n-task-runners.json /etc/n8n-task-runners.json
 
 USER runner
