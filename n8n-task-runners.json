@@ -1,0 +1,42 @@
+{
+  "task-runners": [
+    {
+      "runner-type": "javascript",
+      "path": "node",
+      "args": ["dist/index.js"],
+      "working-directory": "/opt/runners/task-runner-javascript",
+      "health-check-server-port": "5681",
+      "allowed-env": [
+        "PUPPETEER_EXECUTABLE_PATH",
+        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD",
+        "CHROME_BIN",
+        "CHROMIUM_FLAGS",
+        "NODE_FUNCTION_ALLOW_BUILTIN",
+        "NODE_FUNCTION_ALLOW_EXTERNAL"
+      ],
+      "env-overrides": {
+        "NODE_FUNCTION_ALLOW_BUILTIN": "*",
+        "NODE_FUNCTION_ALLOW_EXTERNAL": "puppeteer-core,playwright-core,node-fetch,axios,cheerio,jsdom,xpath,tough-cookie,moment,moment-timezone,lodash,uuid,validator,date-fns,jsonpath,joi,form-data,@faker-js/faker,ms,xml2js,csv-parse,pdf-parse,sharp,openai,@anthropic-ai/sdk,tesseract.js",
+        "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/chromium-browser",
+        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true"
+      }
+    },
+    {
+      "runner-type": "python",
+      "path": "python3",
+      "args": ["main.py"],
+      "working-directory": "/opt/runners/task-runner-python",
+      "health-check-server-port": "5682",
+      "allowed-env": [
+        "PYTHONPATH",
+        "N8N_RUNNERS_STDLIB_ALLOW",
+        "N8N_RUNNERS_EXTERNAL_ALLOW"
+      ],
+      "env-overrides": {
+        "PYTHONPATH": "/opt/runners/task-runner-python",
+        "N8N_RUNNERS_STDLIB_ALLOW": "*",
+        "N8N_RUNNERS_EXTERNAL_ALLOW": "*"
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# Stage 1: Alpine limpo para copiar o apk
+FROM alpine:3.22 AS alpine-base
+
+# Stage 2: imagem dos runners (distroless)
+FROM n8nio/runners:latest
+
+# Restaura o apk da imagem Alpine (workaround para instalar Chromium)
+COPY --from=alpine-base /sbin/apk /sbin/apk
+COPY --from=alpine-base /usr/lib/libapk.so* /usr/lib/
+
+USER root
+
+# Instalação do Chromium e dependências para Puppeteer
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    font-noto \
+    pango \
+    libxkbcommon \
+    udev \
+    dbus
+
+# Variáveis de ambiente para o Puppeteer encontrar o Chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    CHROME_BIN=/usr/bin/chromium-browser \
+    CHROMIUM_FLAGS="--no-sandbox --disable-gpu --disable-dev-shm-usage"
+
+# Instalação das bibliotecas JS
+RUN cd /opt/runners/task-runner-javascript && pnpm add \
+    puppeteer-core \
+    playwright-core \
+    node-fetch \
+    axios \
+    cheerio \
+    jsdom \
+    xpath \
+    tough-cookie \
+    moment \
+    moment-timezone \
+    lodash \
+    uuid \
+    validator \
+    date-fns \
+    jsonpath \
+    joi \
+    form-data \
+    @faker-js/faker \
+    ms \
+    xml2js \
+    csv-parse \
+    pdf-parse \
+    sharp \
+    openai \
+    @anthropic-ai/sdk \
+    tesseract.js
+
+# AJUSTE CRÍTICO: Copiar com permissão para o usuário runner
+COPY --chown=runner:runner n8n-task-runners.json /etc/n8n-task-runners.json
+
+USER runner
