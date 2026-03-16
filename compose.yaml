@@ -148,6 +148,6 @@ services:
       dockerfile: Dockerfile.puppeteer
     restart: always
     ports:
-      - "3000:3000"
+      - "3015:3015"
     environment:
       - NODE_ENV=production
